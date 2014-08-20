@@ -3,6 +3,6 @@ require ::File.expand_path('../app.rb', __FILE__)
 
 require 'rack/csrf'
 use Rack::Session::Cookie, secret: 'Z4NzcPPaHspO9C5OaPBjs7T7dBuipx'
-use Rack::Csrf, raise: true, field: 'csrf_token'
+use Rack::Csrf, field: 'csrf_token'
 
 run Sinatra::Application
