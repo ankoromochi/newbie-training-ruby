@@ -192,7 +192,8 @@ post '/signin' do
   validator.set_error('login', 'FAILED')
   @errors = validator.errors
 
-  erb :signin
+  body = erb :signin
+  HTML::FillinForm::Lite.new.fill(body, request)
 end
 
 get '/signup' do
