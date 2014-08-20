@@ -68,6 +68,33 @@ describe 'signup' do
 
     expect(last_response.status).to eq(403)
   end
+
+  it 'validation error' do
+    get '/signup'
+    expect(last_response.status).to eq(200)
+    doc = Nokogiri::HTML(last_response.body)
+    hidden = doc.css("form.form-signin input[name='csrf_token']")
+    expect(hidden).to be_present
+    expect(hidden.attribute('value')).to be_present
+
+    username = "test#{$$}"
+    password = "pass#{$$}"
+    post '/signup', username:         username,
+                    password:         password,
+                    password_confirm: password,
+                    csrf_token:       hidden.attribute('value')
+    expect(last_response.status).to eq(200)
+    expect(last_response.body).to have_tag('div.error span.help-inline', text: /Already exists/)
+
+    username = "xxxx#{$$}"
+    password = "pass#{$$}"
+    post '/signup', username:         username,
+                    password:         password,
+                    password_confirm: "#{password}xxx",
+                    csrf_token:       hidden.attribute('value')
+    expect(last_response.status).to eq(200)
+    expect(last_response.body).to have_tag('div.error span.help-inline', text: /Confirm mismatch/)
+  end
 end
 
 describe 'signout' do
